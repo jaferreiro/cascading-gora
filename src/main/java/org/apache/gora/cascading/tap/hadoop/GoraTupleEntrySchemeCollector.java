@@ -23,6 +23,7 @@ import cascading.tuple.TupleEntrySchemeCollector;
 /**
  * Copied from HBaseTapCollector
  */
+@SuppressWarnings("rawtypes")
 public class GoraTupleEntrySchemeCollector extends TupleEntrySchemeCollector implements OutputCollector<Object, Object>{
 
     /** Field LOG */
@@ -48,6 +49,7 @@ public class GoraTupleEntrySchemeCollector extends TupleEntrySchemeCollector imp
      * @throws IOException
      * when fails to initialize
      */
+    @SuppressWarnings("unchecked")
     public GoraTupleEntrySchemeCollector(FlowProcess<JobConf> flowProcess, GoraTap tap) throws IOException {
             super(flowProcess, tap.getScheme(), tap.getIdentifier());
             this.hadoopFlowProcess = flowProcess;
@@ -71,7 +73,6 @@ public class GoraTupleEntrySchemeCollector extends TupleEntrySchemeCollector imp
             super.prepare();
     }
 
-    @SuppressWarnings("rawtypes")
     public static class DumbStatusReporterProgressable extends StatusReporter implements Progressable {
 
         // Copied from PigReporter
@@ -126,6 +127,7 @@ public class GoraTupleEntrySchemeCollector extends TupleEntrySchemeCollector imp
         
     }
     
+    @SuppressWarnings("unchecked")
     private void initialize() throws IOException {
             tap.sinkConfInit(hadoopFlowProcess, conf);
             OutputFormat outputFormat = conf.getOutputFormat();
@@ -155,6 +157,7 @@ public class GoraTupleEntrySchemeCollector extends TupleEntrySchemeCollector imp
      * @throws IOException
      * when
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void collect(Object writableComparable, Object writable)
                     throws IOException {
@@ -163,6 +166,5 @@ public class GoraTupleEntrySchemeCollector extends TupleEntrySchemeCollector imp
 
             writer.write(writableComparable, writable);
     }
-    
     
 }

@@ -26,8 +26,6 @@ import com.twitter.elephantbird.mapreduce.input.MapredInputFormatCompatible;
 import com.twitter.elephantbird.mapred.output.DeprecatedOutputFormatWrapper;
 import com.twitter.elephantbird.util.HadoopUtils;
 
-
-
 /**
  * The wrapper enables an {@link InputFormat} written for new
  * <code>mapreduce</code> interface to be used unmodified in contexts where
@@ -53,6 +51,8 @@ import com.twitter.elephantbird.util.HadoopUtils;
  * @see DeprecatedOutputFormatWrapper
  *
  * @author Raghu Angadi
+ *
+ * Copied from original source com.twitter.elephantbird.mapred.input
  *
  */
 public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormatWrapper<K,V> {
@@ -91,7 +91,7 @@ public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormat
     realInputFormat = inputFormat;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   private void initInputFormat(JobConf conf) {
     if (realInputFormat == null) {
             realInputFormat = ReflectionUtils.newInstance(conf.getClass(CLASS_CONF_KEY, null, InputFormat.class), conf);
@@ -195,7 +195,6 @@ public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormat
       wrappedReporter.progress();
     }
 
-    // @Override
     public float getProgress() {
       throw new UnsupportedOperationException();
     }
@@ -209,6 +208,7 @@ public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormat
   private static class RecordReaderWrapper<K, V> implements RecordReader<K, V> {
 
     private org.apache.hadoop.mapreduce.RecordReader<K, V> realReader;
+    @SuppressWarnings("rawtypes")
     private MapredInputFormatCompatible mifcReader = null;
 
     private long splitLen; // for getPos()
@@ -223,6 +223,7 @@ public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormat
 
     private DeprecatedInputFormatValueCopier<V> valueCopier = null;
         
+    @SuppressWarnings("rawtypes")
     public RecordReaderWrapper(InputFormat<K, V> newInputFormat, InputSplit oldSplit, JobConf oldJobConf,
                 Reporter reporter, DeprecatedInputFormatValueCopier<V> valueCopier) throws IOException {
 
@@ -309,6 +310,7 @@ public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormat
       }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean next(K key, V value) throws IOException {
       if (eof) {
@@ -372,6 +374,7 @@ public class GoraDeprecatedInputFormatWrapper<K,V> extends DeprecatedInputFormat
     @SuppressWarnings("unused") // MapReduce instantiates this.
     public InputSplitWrapper() {}
 
+    @SuppressWarnings("unused")
     public InputSplitWrapper(org.apache.hadoop.mapreduce.InputSplit realSplit) {
         this.realSplit = realSplit;
       }
